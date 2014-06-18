@@ -57,6 +57,9 @@ module Curburger
       opts[:exception_status].uniq!
       initialize_curl unless @curb
       initialize_request url, opts
+
+      # for different proxy per request
+      @curb.proxy_url = opts[:http_proxy] if opts.include?(:http_proxy)
       while attempt < opts[:attempts]
         attempt += 1
         req_limit_check block if @reqs # request limitation enabled
