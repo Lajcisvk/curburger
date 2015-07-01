@@ -87,12 +87,13 @@ module Curburger
 
           rslt = get_result m, opts
           @reqs[:cnt] += 1 if @reqs # increase request limitation counter
-          log? && GLogg.log_d4? && GLogg.log_d4(sprintf(                      #_
-              "Curburger::Request#request:\n    %s %s\n    " +                #_
-              'Done in %.6f secs (%u/%u attempt%s, %us/%us connect/timeout).',#_
-              m.to_s.upcase, url, Time.now - t0, attempt, opts[:attempts],    #_
-              opts[:attempts] == 1 ? '' : 's',                                #_
-              @curb.connect_timeout, @curb.timeout))                          #_
+          GLogg.l_d4{ sprintf(                      #_
+            "Curburger::Request#request:\n    %s %s\n    " +
+            'Done in %.6f secs (%u/%u attempt%s, %us/%us connect/timeout).',
+            m.to_s.upcase, url, Time.now - t0, attempt, opts[:attempts],
+            opts[:attempts] == 1 ? '' : 's',
+            @curb.connect_timeout, @curb.timeout)
+          }
           return rslt.merge({
             :last_url  => @curb.last_effective_url,
             :attempts  => attempt,
@@ -170,10 +171,9 @@ module Curburger
 
     def initialize_request url, opts
       @curb.url = url
-      @curb.enable_cookies = true  if
+      @curb.enable_cookies = true if
         opts[:cookies] || opts[:read_cookies] || opts[:use_cookies]
-      @curb.cookies =
-        opts[:use_cookies] ? cookies[:cookies_string] : ''
+      @curb.cookies = ''
       @curb.cookies += opts[:cookies] if
         opts[:cookies] && opts[:cookies].kind_of?(String)
       # reset additional request headers,
